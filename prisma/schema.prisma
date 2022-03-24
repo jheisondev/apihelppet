@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  refresh_token RefreshToken?
+  pet           Pet[]
+
+  Comment Comment[]
+  Like    Like[]
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String @id @default(uuid())
+  expiresIn Int
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("refresh_token")
+}
+
+model Pet {
+  id             String   @id @default(uuid())
+  name           String
+  uf             String
+  city           String
+  dateBirth      DateTime
+  bio            String
+  size           String
+  gender         String
+  adoptionStatus Boolean  @default(false)
+  photos         String[]
+  createdAt      DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  Comment Comment[]
+  Like    Like[]
+  @@map("pets")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  comment   String
+  createdAt DateTime @default(now())
+
+  petId  String
+  pet    Pet    @relation(fields: [petId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  petId String
+  pet   Pet    @relation(fields: [petId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("likes")
+}
