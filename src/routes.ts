@@ -28,7 +28,7 @@ router.post('/pets/comment', createCommentsController.handle);
 router.post('/pets/comment/remove', removeCommentsController.handle);
 router.post('/pets/like', createLikesController.handle);
 
-router.get('/user', ensureAuthenticated, (request, response) => {
+router.get('/user', (request, response) => {
   return response.json([
     {
       id: 1,
